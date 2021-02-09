@@ -2,6 +2,8 @@
 
     namespace App\Jobs;
 
+    use App\Models\Attachment;
+    use App\Models\Email;
     use Illuminate\Bus\Queueable;
     use Illuminate\Contracts\Queue\ShouldBeUnique;
     use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,5 +38,23 @@
         {
             //
             Mail::to($this->email['to'])->send(new SendEmail($this->email));
+
+            $email = Email::create([
+                'to' => $this->email['to'],
+                'subject' => $this->email['subject'],
+                'body' => $this->email['body'],
+            ]);
+
+            $attachments = array();
+
+            foreach($this->email['attachments'] as $attachment) {
+                $att = new Attachment();
+                $att->name = $attachment['name'];
+                $att->value = $attachment['value'];
+
+                $attachments[]= $att;
+            }
+
+            $email->attachments()->saveMany($attachments);
         }
     }
