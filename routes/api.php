@@ -19,3 +19,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/send', EmailController::class.'@send');
+
+Route::get('/list', EmailController::class.'@list');
